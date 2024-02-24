@@ -11,19 +11,23 @@ typedef float (*Operation)(float, float);
 //such as expr1 + 3 where expr1 = 4 + 6 (remember that the numbers are expresions too) 
 //in order to enforce this expressions are created one of two constructors
 
+struct _expression; //needed for averting warnings
 
-typedef void (*OperationDer)(struct expression*, struct expression*, float); 
+typedef void (*OperationDer)(struct _expression*,  struct _expression*, float); 
 
-typedef struct { //CHANGE SO TTHAT ONLY V IS USED AND OTHER THIGNS CMPRE TO NULL AND USE ->
+
+typedef struct _expression{ //CHANGE SO TTHAT ONLY V IS USED AND OTHER THIGNS CMPRE TO NULL AND USE ->
     float value; //stores intermediate value of variable
-    struct expression* a; //since this can be recursive and will end in a variable
-    struct expression* b; //and so can be thought of as being the graph
+    struct _expression* a; //since this can be recursive and will end in a variable
+    struct _expression* b; //and so can be thought of as being the graph
     Operation func;
     OperationDer der; 
     float forwardValue; //stores intermediate result of expression 
     float partialDerivateBackwardValue; //stores value of partial derivative 
                                 //with respect to outmost expression 
 } expression;
+
+
 
 
 //only sets the varibale part of the expression struct
@@ -58,8 +62,8 @@ expression constructConstant(float value){
 expression constructEvaluation(expression* a, expression* b, Operation func, OperationDer  der){
     expression eval;
     eval.value = NAN; 
-    eval.a = a;
-    eval.b = b;
+    eval.a =  a; 
+    eval.b =  b;
     eval.func = func;
     eval.der = der;
     eval.forwardValue = 0;
@@ -173,8 +177,8 @@ void ReLuDer(expression* a, expression* b, float seed){
 
 
 
-Operation add = &addition;
-OperationDer addDer = &additionDer;
+Operation add =  &addition;
+OperationDer addDer =  &additionDer;
 Operation mul = &multiplication;
 OperationDer mulDer = &multiplicationDer;
 Operation relu = &ReLu;
